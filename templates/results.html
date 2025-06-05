@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex flex-md-row justify-content-center align-items-center mt-5">
+    <div class="d-flex flex-column flex-md-row align-items-center text-center text-md-start gap-0">
+                <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='assets/Logov2.png') }}" alt="logo" class="img-fluid" style="width: 60px; height: auto; z-index: 1;"></a>
+                <div class="ms-md-3 mt-3 mt-md-0">
+                    <h1 class="mb-1">Context Scholar</h1>
+                </div>
+    </div>
+    <form action="{{ url_for('results') }}" class="mx-5" style="max-width: 768px; width: 100%;">
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        class="form-control custom-search-input" 
+                        placeholder="Search papers, authors, or concepts..." 
+                        id="search_input" 
+                        aria-label="Search"
+                        name="query"
+                        value="{{ query }}"
+                    >
+                    <button class="btn custom-search-btn" type="submit">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </button>
+                </div>
+    </form>
+</div>
+    {% if results %}
+        <div class="d-flex flex-column align-items-center mt-5">
+        <h2 class="text-center mb-5">🔍 Top Matching Papers</h2>
+        {% for paper in results %}
+            <div class="paper-card card" style="width: 80%;">
+                <div class="card-body">
+                    <div class="paper-title ">
+                                <a href="{{ paper.url }}" target="_blank">{{ paper.rank }}. {{ paper.title }}</a>
+                    </div>
+                            <div class="authors ">👤 {{ paper.authors }}</div>
+                            <p class="card-text">
+                                <strong>Score:</strong> {{ paper.score }}|
+                                <strong>Citations:</strong> {{ paper.citations }} |
+                                <strong>Year:</strong> {{ paper.year }}
+                            </p>
+                            <div class="abstract">{{ paper.abstract }}</div>
+            </div>
+            </div>
+        {% endfor %}
+    {% else %}
+            <div class="mt-5" style="height: 50vh;">
+                <h1 class="text-center" style="">No papers found</h1>
+            </div>
+    {% endif %}
+    </div>
+    <div class="footer" style="background-color: #231f20; padding-left: 2rem; padding-right: 1rem;">
+    <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-4 my-4 border-top small" >
+        <div class="col mb-3">
+            <h5 class="footer-title" style="color: aliceblue;">What is Context Scholar?</h5>
+            <p class="justify-content-justify" style="color: aliceblue;">
+                Context Scholar is an AI-powered academic search engine designed to help researchers discover relevant work based on semantic meaning, not citation counts. By combining fine-tuned BERT models and fairness-aware ranking, we promote equitable, context-aware research discovery.
+            </p>
+            <a href="#" class="text-decoration-none" style="color: #a086c7;">Learn More</a>
+        </div>
+        <div class="col mb-3">
+            <h5 class="footer-title">About</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Our Mission</a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Team & Advisors</a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Open Thesis & Paper</a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Careers</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col mb-3">
+            <h5 class="footer-title">Product</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Semantic Search Overview</a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Citation Bias Mitigation</a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Context-Aware Ranking</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col mb-3">
+            <h5 class="footer-title">API & Toolkit</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">API Access</a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Query Playground</a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">BERT Model Card</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col mb-3">
+            <h5 class="footer-title" >Help</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">FAQ</a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Contact</a>
+                </li>
+            </ul>
+        </div>  
+    </footer>
+</div>
+{% endblock %}
