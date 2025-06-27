@@ -48,6 +48,15 @@
                 <h1 class="text-center" style="">No papers found</h1>
             </div>
     {% endif %}
+    {% if ndcg is defined %}
+    <h4>Evaluation Metrics</h4>
+    <ul>
+        <li>NDCG: {{ ndcg }}</li>
+        <li>MRR: {{ mrr }}</li>
+        <li>nFAIRR: {{ nfairr }}</li>
+    </ul>
+    {% endif %}
+
     </div>
     <div class="footer" style="background-color: #231f20; padding-left: 2rem; padding-right: 1rem;">
     <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-4 my-4 border-top small" >

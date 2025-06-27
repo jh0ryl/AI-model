@@ -1,0 +1,101 @@
+doc_id,title,text,citations
+D001,COVID-19 Vaccine,"The COVID-19 vaccine helps in preventing severe infection and reduces hospitalizations.",580
+D002,Social Distancing,"Keeping a safe distance from others prevents the spread of the virus.",430
+D003,Mask Effectiveness,"Wearing masks in public places significantly reduces transmission rates.",610
+D004,Vaccine Side Effects,"Some people experience mild fever and fatigue after vaccination.",270
+D005,Omicron Variant,"The Omicron variant spreads faster but causes less severe symptoms.",390
+D006,Booster Shots,"Booster doses enhance immunity and provide extended protection.",345
+D007,Pandemic Response,"Countries adopted lockdowns and travel bans to slow the pandemic.",520
+D008,Herd Immunity,"Achieving herd immunity requires a high percentage of vaccinated individuals.",480
+D009,School Reopening,"Protocols are in place to ensure student safety during in-person classes.",230
+D010,Remote Work,"Work from home became a norm during the pandemic.",300
+D011,Symptoms of COVID-19,"Common symptoms include fever, cough, and loss of taste or smell.",710
+D012,Contact Tracing,"Tracking contacts of infected individuals helps break transmission chains.",440
+D013,Testing Protocols,"RT-PCR tests are the gold standard for COVID-19 detection.",390
+D014,Immunocompromised Patients,"People with weak immune systems are at higher risk.",510
+D015,Vaccine Hesitancy,"Misinformation contributes to reluctance in getting vaccinated.",270
+D016,Hospital Capacity,"Hospitals faced a shortage of ICU beds and staff during peak waves.",560
+D017,Post-COVID Syndrome,"Some people suffer long-term effects known as long COVID.",620
+D018,Antibody Testing,"Tests can detect past infection by identifying antibodies.",430
+D019,Sanitization,"Frequent handwashing and disinfection are vital preventive measures.",340
+D020,Quarantine Guidelines,"Infected individuals must isolate for at least 5-10 days.",410
+D021,Travel Restrictions,"Countries imposed travel bans to prevent international spread.",395
+D022,Telemedicine,"Remote consultations became common during lockdowns.",285
+D023,Mutation Monitoring,"Genome sequencing tracks emerging variants.",510
+D024,Vaccine Distribution,"Equitable distribution is a global health priority.",460
+D025,Ventilator Use,"Critical patients may require mechanical ventilation.",510
+D026,COVID in Children,"Children typically show milder symptoms but can transmit the virus.",370
+D027,Immunity Duration,"Protection from infection or vaccines wanes over time.",480
+D028,Economic Impact,"Lockdowns severely affected economies worldwide.",550
+D029,Mental Health,"The pandemic increased anxiety and depression rates.",620
+D030,Mask Mandates,"Governments issued mask requirements in public settings.",410
+D031,Health Workers,"Frontline workers faced high exposure and burnout.",580
+D032,Infection Control,"Hospitals implemented strict infection control measures.",540
+D033,Antiviral Drugs,"Some medications are approved for emergency use.",460
+D034,Vaccine Research,"mRNA vaccines were developed in record time.",750
+D035,Public Awareness,"Campaigns aimed to educate people on preventive measures.",390
+D036,COVID Tests,"Rapid antigen tests provide results within minutes.",430
+D037,Asymptomatic Carriers,"People without symptoms can still spread the virus.",470
+D038,Indoor Airflow,"Proper ventilation reduces risk of airborne transmission.",350
+D039,COVID Transmission,"The virus primarily spreads through respiratory droplets.",520
+D040,Isolation Facilities,"Governments built isolation centers to contain spread.",290
+D041,WHO Guidelines,"The World Health Organization released regular advisories.",630
+D042,Mask Quality,"N95 masks offer better protection than cloth masks.",410
+D043,Patient Recovery,"Recovery depends on age, health, and treatment timing.",460
+D044,Vaccine Certificates,"Proof of vaccination is required for international travel.",340
+D045,Data Reporting,"Governments report daily COVID-19 cases and deaths.",470
+D046,Flu vs COVID-19,"Symptoms can overlap but are caused by different viruses.",380
+D047,COVID Scams,"Fake cures and scams spread during the pandemic.",270
+D048,Infection Trends,"Cases rose in waves corresponding to variant outbreaks.",395
+D049,Genetic Factors,"Genetics may influence COVID-19 severity.",330
+D050,COVID Origins,"The origin of the virus remains under investigation.",320
+D051,COVID-19 in Pets,"Animals can contract the virus but cases are rare.",150
+D052,Travel Corridors,"Safe travel corridors were implemented during the pandemic.",180
+D053,Vaccine Shelf Life,"Vaccines must be stored under strict temperature conditions.",200
+D054,Digital Vaccination Records,"Apps were developed to store vaccination certificates.",220
+D055,False Positives,"Test results can sometimes be inaccurate.",250
+D056,Contactless Delivery,"Delivery services adapted to reduce exposure risk.",260
+D057,Pandemic Preparedness,"Lessons from COVID-19 highlight the need for better planning.",310
+D058,Internet Misinformation,"False information spread rapidly on social media.",340
+D059,International Cooperation,"Global collaboration helped accelerate vaccine development.",380
+D060,COVID and Pregnancy,"Pregnant women may face complications from COVID-19.",330
+D061,COVID and Diabetes,"People with diabetes face higher risks of severe illness.",400
+D062,Mask Reuse,"Guidelines were issued for safe mask reuse.",220
+D063,Plasma Therapy,"Plasma from recovered patients was tested for treatment.",280
+D064,Face Shield Use,"Additional barriers like face shields were recommended.",210
+D065,Workplace Safety,"Companies created protocols to protect employees.",360
+D066,COVID Testing Sites,"Drive-thru and pop-up testing sites were launched.",300
+D067,University Policies,"Colleges shifted to online learning and hybrid models.",260
+D068,Travel Documentation,"Digital documents made international travel easier.",240
+D069,Quarantine Hotels,"Travelers were isolated in designated facilities.",270
+D070,Mask Distribution,"Governments provided masks to vulnerable populations.",230
+D071,Vaccine Tracking Systems,"Real-time monitoring of doses ensured coverage.",250
+D072,COVID and Heart Disease,"Cardiac patients were prioritized for care.",340
+D073,Remote Learning,"Schools adopted digital tools to continue education.",380
+D074,Mental Health Helplines,"Support services were expanded during lockdowns.",370
+D075,Variants of Concern,"Certain variants required stricter public health measures.",460
+D076,Mobile Vaccination Units,"Vaccines were brought to remote communities.",300
+D077,Public Health Messaging,"Clear communication built trust in guidelines.",290
+D078,Scientific Collaboration,"Research teams shared data across borders.",390
+D079,Mask Recycling,"Initiatives for sustainable mask disposal were introduced.",150
+D080,Open Data Dashboards,"Live dashboards kept the public informed.",410
+D081,Emergency Use Authorization,"Medicines received temporary approval during crises.",350
+D082,Hand Sanitizer Safety,"Improper use of sanitizers can cause harm.",240
+D083,Airline Safety Protocols,"Airlines adopted new procedures to protect passengers.",290
+D084,Genomic Surveillance,"DNA sequencing helped detect virus mutations early.",420
+D085,Vaccine Trials,"Clinical trials tested safety and efficacy of vaccines.",510
+D086,Border Control Policies,"Screening at borders helped control entry.",310
+D087,Healthcare Inequality,"The pandemic exposed healthcare access gaps.",370
+D088,Online Fitness Programs,"Gyms shifted to virtual classes.",220
+D089,Public Compliance,"Policy success depended on citizen cooperation.",330
+D090,Pandemic Fatigue,"Long-term measures led to public exhaustion.",280
+D091,Long-Term Symptoms,"Neurological and respiratory issues can persist.",410
+D092,COVID Conspiracy Theories,"Baseless theories undermined safety efforts.",240
+D093,International Aid,"Vaccines and supplies were sent to developing countries.",300
+D094,Cold vs COVID-19,"Diagnostic criteria helped differentiate illnesses.",270
+D095,COVID Testing Accuracy,"Factors influence test sensitivity and specificity.",350
+D096,Vaccine Prioritization,"Priority groups were identified for early vaccination.",370
+D097,AI in COVID Detection,"AI models assisted in early symptom detection.",290
+D098,Public Transport Risk,"Buses and trains posed transmission risks.",310
+D099,Pharmaceutical Supply Chain,"Medicine production faced disruption.",280
+D100,Immunity Passports,"Debate over rights and risks of immunity certification.",260
