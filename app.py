@@ -92,29 +92,43 @@ def compute_nfairr_fair(ranked_doc_ids, query_id):
     return actual / ideal if ideal != 0 else 0
 
 # --- Citation-aware BM25 + Cross-Encoder Search ---
-def search_local(query_text, top_k=5):
+def search_local(query_text, top_k=5, bm25_k=20, bi_k=10):
     query_tokens = query_text.lower().split()
     raw_bm25_scores = bm25.get_scores(query_tokens)
 
-    # Adjust BM25 scores using citation weighting
-    adjusted_scores = []
-    for i, score in enumerate(raw_bm25_scores):
-        doc_id = doc_id_list[i]
-        citation_count = corpus[doc_id].get("citations", 0)
-        weight = 1 / math.log1p(citation_count + 1)  # log1p ensures no division by zero
-        adjusted_scores.append(score * weight)
+    # --- Stage 1: BM25 Top-K (pure BM25, no citation weighting)
+    bm25_top_indices = sorted(
+        range(len(raw_bm25_scores)),
+        key=lambda i: raw_bm25_scores[i],
+        reverse=True
+    )[:bm25_k]
 
-    top_indices = sorted(range(len(adjusted_scores)), key=lambda i: adjusted_scores[i], reverse=True)[:top_k]
+    bm25_top_doc_ids = [doc_id_list[i] for i in bm25_top_indices]
+    bm25_top_texts = [
+        (corpus[doc_id]["title"] or '') + ". " + (corpus[doc_id]["text"] or '')
+        for doc_id in bm25_top_doc_ids
+    ]
 
-    top_doc_ids = [doc_id_list[i] for i in top_indices]
-    top_doc_texts = [(corpus[doc_id]["title"] or '') + ". " + (corpus[doc_id]["text"] or '') for doc_id in top_doc_ids]
+    # --- Stage 2: Bi-Encoder Semantic Re-ranking
+    query_embedding = bi_encoder.encode(query_text, convert_to_tensor=True)
+    doc_embeddings = bi_encoder.encode(bm25_top_texts, convert_to_tensor=True)
+    bi_scores = util.pytorch_cos_sim(query_embedding, doc_embeddings)[0]
 
-    # Cross-encoder reranking
-    cross_inputs = [(query_text, doc) for doc in top_doc_texts]
+    bi_top_indices = torch.topk(bi_scores, k=min(bi_k, len(bi_scores))).indices.tolist()
+    bi_top_doc_ids = [bm25_top_doc_ids[i] for i in bi_top_indices]
+    bi_top_texts = [bm25_top_texts[i] for i in bi_top_indices]
+
+    # --- Stage 3: Cross-Encoder Final Ranking
+    cross_inputs = [(query_text, doc_text) for doc_text in bi_top_texts]
     cross_scores = cross_encoder.predict(cross_inputs)
 
-    ranked = sorted(zip(top_doc_ids, cross_scores), key=lambda x: x[1], reverse=True)
+    ranked = sorted(
+        zip(bi_top_doc_ids, cross_scores),
+        key=lambda x: x[1],
+        reverse=True
+    )
     return ranked
+
 
 # --- Flask Routes ---
 @app.route('/')
