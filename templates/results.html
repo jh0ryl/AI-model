@@ -49,29 +49,24 @@
             </div>
     {% endif %}
     </div>
-    <div class="footer" style="background-color: #231f20; padding-left: 2rem; padding-right: 1rem;">
-    <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-4 my-4 border-top small" >
+    
+<div class="footer" style="background-color: #231f20; padding-left: 2rem; padding-right: 1rem;">
+    <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-4 my-4 border-top small">
         <div class="col mb-3">
             <h5 class="footer-title" style="color: aliceblue;">What is Context Scholar?</h5>
             <p class="justify-content-justify" style="color: aliceblue;">
                 Context Scholar is an AI-powered academic search engine designed to help researchers discover relevant work based on semantic meaning, not citation counts. By combining fine-tuned BERT models and fairness-aware ranking, we promote equitable, context-aware research discovery.
             </p>
-            <a href="#" class="text-decoration-none" style="color: #a086c7;">Learn More</a>
         </div>
+
         <div class="col mb-3">
             <h5 class="footer-title">About</h5>
             <ul class="nav flex-column">
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Our Mission</a>
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor" data-bs-toggle="modal" data-bs-target="#missionModal">Our Mission</a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Team & Advisors</a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Open Thesis & Paper</a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Careers</a>
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor" data-bs-toggle="modal" data-bs-target="#thesisModal">Open Thesis & Paper</a>
                 </li>
             </ul>
         </div>
@@ -80,13 +75,10 @@
             <h5 class="footer-title">Product</h5>
             <ul class="nav flex-column">
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Semantic Search Overview</a>
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor" data-bs-toggle="modal" data-bs-target="#semanticModal">Semantic Search Overview</a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Citation Bias Mitigation</a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Context-Aware Ranking</a>
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor" data-bs-toggle="modal" data-bs-target="#biasModal">Citation Bias Mitigation</a>
                 </li>
             </ul>
         </div>
@@ -95,28 +87,25 @@
             <h5 class="footer-title">API & Toolkit</h5>
             <ul class="nav flex-column">
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">API Access</a>
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor" data-bs-toggle="modal" data-bs-target="#apiModal">API Access</a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Query Playground</a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">BERT Model Card</a>
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor" data-bs-toggle="modal" data-bs-target="#playgroundModal">Query Playground</a>
                 </li>
             </ul>
         </div>
 
         <div class="col mb-3">
-            <h5 class="footer-title" >Help</h5>
+            <h5 class="footer-title">Help</h5>
             <ul class="nav flex-column">
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">FAQ</a>
-                </li>
-                <li class="nav-item mb-2">
-                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor">Contact</a>
+                    <a href="#" class="nav-link p-0 text-muted text-decoration-none footer-anchor" data-bs-toggle="modal" data-bs-target="#faqModal">FAQ</a>
                 </li>
             </ul>
-        </div>  
+        </div>
     </footer>
 </div>
+
+<!-- Footer Modals -->
+{% include "modals.html" %}
 {% endblock %}
