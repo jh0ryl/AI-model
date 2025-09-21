@@ -1,6 +1,11 @@
 query_id,text
-Q1,effectiveness of COVID-19 vaccine
-Q2,how long does COVID-19 immunity last
-Q3,impact of lockdown on mental health
-Q4,preventing COVID-19 spread in schools
-Q5,what are common COVID-19 symptoms
+14,what evidence is there related to COVID-19 super spreaders
+40,What are the observed mutations in the SARS-CoV-2 genome and how often do the mutations occur?
+31,How does the coronavirus differ from seasonal flu?
+46,what evidence is there for dexamethasone as a treatment for COVID-19?
+18,what are the best masks for preventing infection by Covid-19?
+49,"do individuals who recover from COVID-19 show sufficient immune response, including antibody levels and T-cell mediated immunity, to prevent re-infection?"
+27,what is known about those infected with Covid-19 but are asymptomatic?
+26,what are the initial symptoms of Covid-19?
+33,What vaccine candidates are being tested for Covid-19?
+20,are patients taking Angiotensin-converting enzyme inhibitors (ACE) at increased risk for COVID-19?
