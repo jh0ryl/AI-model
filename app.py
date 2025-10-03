@@ -11,7 +11,7 @@ import torch.nn as nn
 
 app = Flask(__name__)
 
-# --- Custom WeightedPooling class (must be defined before loading model) ---
+# --- Custom WeightedPooling class  ---
 class WeightedPooling(nn.Module):
     def __init__(self, embedding_dim):
         super(WeightedPooling, self).__init__()
@@ -51,7 +51,7 @@ class WeightedPooling(nn.Module):
         return inst
 
 
-# --- Load CSV Files with Citation Info ---
+# --- Load CSV Files ---
 print("Loading corpus, queries, and qrels...")
 
 corpus_df = pd.read_csv("corpus_with_citations.csv")
@@ -88,8 +88,8 @@ def tokenize(text: str):
     return text.split()
 
 
-# --- Build BM25 index (manual implementation) ---
-print("Building internal BM25 index...")
+# --- Manual indexing ---
+print("Building internal index...")
 
 doc_id_list = list(corpus.keys())
 doc_texts = [
@@ -125,11 +125,13 @@ print(f"Indexed {N} documents, avgdl={avgdl:.2f}, vocabulary={len(doc_freq)} ter
 
 # --- Load Models ---
 print("Loading models...")
-MODEL_OUT = "./biencoder_minilm_weighted_msmarco"
+MODEL1_OUT = "./biencoder_minilm_weighted_msmarco-1"
+MODEL2_OUT = "./crossencoder_citation_trec_covid-1"
 
-bi_encoder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-# bi_encoder = SentenceTransformer(MODEL_OUT)  # loads custom WeightedPooling automatically
-cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
+# bi_encoder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+# cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
+bi_encoder = SentenceTransformer(MODEL1_OUT)  # loads custom WeightedPooling automatically
+cross_encoder = CrossEncoder(MODEL2_OUT)
 
 
 # --- Evaluation Metrics ---
@@ -178,9 +180,8 @@ def compute_nfairr_citation(ranked_doc_ids, top_k=50):
 
 
 
-# --- BM25 scoring (manual) ---
-'''
-def bm25_scores_for_query(query_tokens):
+# --- Initial manual scoring ---
+def raw_scores(query_tokens):
     scores = [0.0] * N
     if N == 0:
         return scores
@@ -196,9 +197,8 @@ def bm25_scores_for_query(query_tokens):
             score_contrib = term_idf * ((tf * (k1 + 1)) / denom) if denom > 0 else 0.0
             scores[doc_idx] += score_contrib
     return scores
-'''
 
-def bm25_scores_for_query(query_tokens):
+def initial_scores(query_tokens):
     scores = [0.0] * N
     if N == 0:
         return scores
@@ -235,7 +235,7 @@ def bm25_scores_for_query(query_tokens):
 
         # Check for both conditions before applying the boost
         if bm25_score > bm25_threshold and citations < citation_threshold:
-            boost = 1 + 0.5 * math.log1p(citations)
+            boost = 1 + 0.1 * math.log1p(citations)
             scores[doc_idx] *= boost
 
     return scores
@@ -243,8 +243,9 @@ def bm25_scores_for_query(query_tokens):
 def search_local(query_text, top_k=50, bm25_k=200, bi_k=100):
     query_tokens = tokenize(query_text)
 
-    # Step 1: BM25 retrieval
-    raw_bm25_scores = bm25_scores_for_query(query_tokens)
+    # Step 1: Initial retrieval
+    raw_score = raw_scores(query_tokens) 
+    raw_bm25_scores = initial_scores(query_tokens)
     bm25_top_indices = sorted(range(len(raw_bm25_scores)),
                               key=lambda i: raw_bm25_scores[i],
                               reverse=True)[:bm25_k]
@@ -272,6 +273,7 @@ def search_local(query_text, top_k=50, bm25_k=200, bi_k=100):
 
     bi_top_doc_ids = [bm25_for_biencoder_ids[i] for i in bi_top_indices]
     bi_top_texts = [bm25_for_biencoder_texts[i] for i in bi_top_indices]
+    bi_top_scores = [bi_scores[i] for i in bi_top_indices]
 
     # Step 3: Cross-Encoder reranking
     # The top 50 from the bi-encoder are already in bi_top_texts
@@ -279,10 +281,17 @@ def search_local(query_text, top_k=50, bm25_k=200, bi_k=100):
     cross_scores = cross_encoder.predict(cross_inputs)
 
     # Final sort of the top 50 documents from the cross-encoder
-    ranked = sorted(zip(bi_top_doc_ids, cross_scores),
-                    key=lambda x: x[1], reverse=True)[:top_k]
+    ranked = sorted(
+        zip(bi_top_doc_ids, bi_top_scores, cross_scores),
+        key=lambda x: x[2],  # sort by cross-encoder
+        reverse=True
+    )[:top_k]
 
-    return ranked
+    initial_raw_lookup = {doc_id_list[i]: raw_score[i] for i in bm25_top_indices}
+    initial_lookup = {doc_id_list[i]: raw_bm25_scores[i] for i in bm25_top_indices}
+    bi_lookup = {doc_id: score for doc_id, score in zip(bi_top_doc_ids, bi_top_scores)}
+
+    return ranked, initial_lookup, initial_raw_lookup, bi_lookup
 
 # --- Flask Routes ---
 @app.route('/')
@@ -291,23 +300,48 @@ def index():
 
 @app.route('/results', methods=['GET', 'POST'])
 def results():
-    selected_query_id = request.args.get('query_id') or request.form.get('query_id')
-    if not selected_query_id:
-        return render_template('results.html', query="", results=[], queries=queries)
+    experiment_mode = request.args.get("experiment_mode") or request.form.get("experiment_mode", "off")
 
-    query_text = queries[selected_query_id]
-    ranked = search_local(query_text, top_k=50)
+    if experiment_mode == "on":
+        # --- Experiment mode ON: uses query_id dropdown ---
+        selected_query_id = request.args.get('query_id') or request.form.get('query_id')
+        if not selected_query_id:
+            return render_template('results.html', query="", results=[], queries=queries, experiment_mode=experiment_mode)
 
-    rel_map = qrels.get(selected_query_id, {})
+        query_text = queries[selected_query_id]
+
+    else:
+        # --- Experiment mode OFF: uses free-text input ---
+        query_text = request.args.get("query") or request.form.get("query")
+        if not query_text:
+            return render_template('results.html', query="", results=[], queries=queries, experiment_mode=experiment_mode)
+
+    # --- Run retrieval pipeline ---
+    ranked, initial_lookup, initial_raw_lookup,  bi_lookup = search_local(query_text, top_k=50)
+
+    rel_map = {}
+    if experiment_mode == "on":
+        # Only qrels available for experiment mode
+        selected_query_id = request.args.get('query_id') or request.form.get('query_id')
+        rel_map = qrels.get(selected_query_id, {})
+
     predicted_rels = []
     final_results = []
     ranked_doc_ids = []
 
-    for rank, (doc_id, score) in enumerate(ranked, start=1):
+    value_threshold = np.median(list(initial_raw_lookup.values())) if initial_raw_lookup else 0.0
+
+    for rank, (doc_id, bi_score, score) in enumerate(ranked, start=1):
         doc = corpus[doc_id]
-        rel_score = rel_map.get(doc_id, 0)
+        rel_score = rel_map.get(doc_id, 0) if experiment_mode == "on" else 0
         predicted_rels.append(rel_score)
         ranked_doc_ids.append(doc_id)
+
+        raw_val = float(initial_raw_lookup.get(doc_id, 0.0))
+        boosted_val = float(initial_lookup.get(doc_id, 0.0))
+
+        fairness_boosted = not math.isclose(raw_val, boosted_val, rel_tol=1e-6)
+        high_relevance = raw_val > value_threshold
 
         final_results.append({
             'rank': rank,
@@ -315,19 +349,37 @@ def results():
             'abstract': doc['text'],
             'url': f"https://www.semanticscholar.org/paper/{doc_id}",
             'score': round(float(score), 4),
+            'bi_score': round(float(bi_lookup.get(doc_id, 0.0)), 4),
+            'initial_raw': round(raw_val, 4),
+            'initial_score': round(boosted_val, 4),
             'doc_id': doc_id,
-            'citations': doc.get("citations", 0)
+            'citations': doc.get("citations", 0),
+            'fairness_boosted': fairness_boosted,
+            'high_relevance': high_relevance
         })
 
-    ideal_rels = sorted(rel_map.values(), reverse=True)
-    ndcg = compute_ndcg(predicted_rels, ideal_rels)
-    mrr = compute_mrr(predicted_rels)
+
+    # --- Metrics ---
+    if experiment_mode == "on":
+        ideal_rels = sorted(rel_map.values(), reverse=True)
+        ndcg = compute_ndcg(predicted_rels, ideal_rels)
+        mrr = compute_mrr(predicted_rels)
+    else:
+        ndcg = 0
+        mrr = 0
+
     nfairr = compute_nfairr_citation(ranked_doc_ids, top_k=50)
 
-
-    return render_template('results.html', query=query_text, results=final_results,
-                           ndcg=round(ndcg, 4), mrr=round(mrr, 4), nfairr=round(nfairr, 4),
-                           queries=queries)
+    return render_template(
+        'results.html',
+        query=query_text,
+        results=final_results,
+        ndcg=round(ndcg, 4),
+        mrr=round(mrr, 4),
+        nfairr=round(nfairr, 4),
+        queries=queries,
+        experiment_mode=experiment_mode
+    )
 
 
 # --- Run App ---
