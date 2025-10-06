@@ -128,8 +128,8 @@ print("Loading models...")
 MODEL1_OUT = "./biencoder_minilm_weighted_msmarco"
 MODEL2_OUT = "./crossencoder_citation_trec_covid"
 
-# bi_encoder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-# cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
+#bi_encoder = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+#cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 bi_encoder = SentenceTransformer(MODEL1_OUT)  # loads custom WeightedPooling automatically
 cross_encoder = CrossEncoder(MODEL2_OUT)
 
@@ -302,36 +302,35 @@ def index():
 def results():
     experiment_mode = request.args.get("experiment_mode") or request.form.get("experiment_mode", "off")
 
+    # --- Get query text ---
     if experiment_mode == "on":
-        # --- Experiment mode ON: uses query_id dropdown ---
         selected_query_id = request.args.get('query_id') or request.form.get('query_id')
         if not selected_query_id:
             return render_template('results.html', query="", results=[], queries=queries, experiment_mode=experiment_mode)
-
         query_text = queries[selected_query_id]
-
     else:
-        # --- Experiment mode OFF: uses free-text input ---
         query_text = request.args.get("query") or request.form.get("query")
         if not query_text:
             return render_template('results.html', query="", results=[], queries=queries, experiment_mode=experiment_mode)
 
     # --- Run retrieval pipeline ---
-    ranked, initial_lookup, initial_raw_lookup,  bi_lookup = search_local(query_text, top_k=50)
+    ranked, initial_lookup, initial_raw_lookup, bi_lookup = search_local(query_text, top_k=50)
 
+    # --- Build rel_map only if experiment mode ON ---
     rel_map = {}
     if experiment_mode == "on":
-        # Only qrels available for experiment mode
         selected_query_id = request.args.get('query_id') or request.form.get('query_id')
         rel_map = qrels.get(selected_query_id, {})
 
-    predicted_rels = []
-    final_results = []
-    ranked_doc_ids = []
+    # --- Prepare result containers ---
+    predicted_rels, final_results, ranked_doc_ids = [], [], []
 
     value_threshold = np.median(list(initial_raw_lookup.values())) if initial_raw_lookup else 0.0
 
-    for rank, (doc_id, bi_score, score) in enumerate(ranked, start=1):
+    # --- Only evaluate top 50 ranked docs (cross-encoder output) ---
+    top_ranked = ranked[:50]
+
+    for rank, (doc_id, bi_score, score) in enumerate(top_ranked, start=1):
         doc = corpus[doc_id]
         rel_score = rel_map.get(doc_id, 0) if experiment_mode == "on" else 0
         predicted_rels.append(rel_score)
@@ -358,17 +357,18 @@ def results():
             'high_relevance': high_relevance
         })
 
-
-    # --- Metrics ---
-    if experiment_mode == "on":
-        ideal_rels = sorted(rel_map.values(), reverse=True)
+    # --- Compute metrics only on top 50 docs ---
+    if experiment_mode == "on" and predicted_rels:
+        ideal_rels = sorted(
+            [rel_map.get(doc_id, 0) for doc_id in ranked_doc_ids],
+            reverse=True
+        )[:50]
         ndcg = compute_ndcg(predicted_rels, ideal_rels)
         mrr = compute_mrr(predicted_rels)
     else:
-        ndcg = 0
-        mrr = 0
+        ndcg, mrr = 0, 0
 
-    nfairr = compute_nfairr_citation(ranked_doc_ids, top_k=50)
+    nfairr = compute_nfairr_citation(ranked_doc_ids[:50], top_k=50)
 
     return render_template(
         'results.html',
